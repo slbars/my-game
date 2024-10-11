@@ -1,0 +1,28 @@
+/* src/styles/Timer.css */
+
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 20px;
+}
+
+.timer-circle {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #007bff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.5s ease;
+}
+
+.timer-circle.low-time {
+  background-color: #dc3545; /* Красный цвет при малом времени */
+}
+
+.timer-text {
+  font-size: 18px;
+  font-weight: bold;
+}

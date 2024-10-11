@@ -1,0 +1,37 @@
+/* Упрощённый стиль для меню кнопок */
+.button-menu-container {
+  background-color: transparent; /* Прозрачный фон, чтобы не было "карточки" */
+  padding: 0;
+  border-radius: 8px; /* Скругление краев */
+  width: 100%; /* Занимает всю ширину */
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  background-color: #0275d8;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background-color: #025aa5;
+}
+
+.btn-primary:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Убираем эффекты карточки */
+#button-menu-container {
+  box-shadow: none; /* Убираем тень */
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+

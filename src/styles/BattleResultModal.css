@@ -1,0 +1,78 @@
+/* src/styles/BattleResultModal.css */
+
+/* Задний фон, затемняющий контент */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Затемнённый фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out; /* Анимация плавного появления */
+}
+
+/* Стили самого модального окна */
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  text-align: center;
+  animation: slideDown 0.5s ease; /* Анимация плавного появления сверху */
+}
+
+/* Стиль для заголовка результата боя */
+.result-win {
+  font-size: 24px;
+  color: #28a745; /* Зеленый цвет для победы */
+  margin-bottom: 20px;
+}
+
+.result-loss {
+  font-size: 24px;
+  color: #dc3545; /* Красный цвет для поражения */
+  margin-bottom: 20px;
+}
+
+/* Кнопка выхода */
+.btn-exit {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-exit:hover {
+  background-color: #0056b3;
+}
+
+/* Анимация для плавного появления заднего фона */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Анимация для плавного появления модального окна */
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

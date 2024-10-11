@@ -1,0 +1,22 @@
+/* Стили для рюкзака */
+.backpack-container {
+  background-color: #f7f7f7;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+
+.backpack-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.backpack-cell {
+  background-color: #ffffff;
+  border: 2px solid #ddd; /* Легкая рамка */
+  padding: 10px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2); /* Тень для элементов */
+  border-radius: 5px;
+  text-align: center;
+}

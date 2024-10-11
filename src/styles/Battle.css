@@ -1,0 +1,54 @@
+/* src/styles/Battle.css */
+
+.battle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.battle-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.player-section,
+.monster-section {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.battle-log {
+  width: 100%;
+  height: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.attack-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.attack-button:hover {
+  background-color: #0056b3;
+}
+
+.attack-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}

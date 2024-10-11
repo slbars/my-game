@@ -1,0 +1,28 @@
+/* src/styles/ExperienceBar.css */
+
+.experience-bar-container {
+  position: relative;
+  width: 100%;
+  height: 25px; /* Убедитесь, что высота соответствует компоненту */
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.experience-bar {
+  height: 100%;
+  background-color: #e58e0a; /* Жёлтый цвет для опыта */
+  transition: width 0.5s ease;
+}
+
+.experience-bar-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #000;
+  top: 0;
+  left: 0;
+  line-height: 25px; /* Центрирование текста */
+}

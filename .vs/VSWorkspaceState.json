@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\backend",
+    "\\backend\\config",
+    "\\public",
+    "\\src",
+    "\\src\\components"
+  ],
+  "SelectedNode": "\\backend\\config\\database.ts",
+  "PreviewInSolutionExplorer": false
+}
