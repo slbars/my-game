@@ -3,11 +3,12 @@ const path = require('path');
 
 // Получаем аргументы командной строки
 const section = process.argv[2] || 'all'; // Первый аргумент: 'frontend', 'backend', или ничего (для обоих)
-const ignoreStyles = process.argv.includes('--ignore-styles'); // Второй аргумент: флаг для игнорирования стилей
+const ignoreStyles = process.argv.includes('--ignore-styles'); // Флаг для игнорирования стилей
+const additionalIgnoreDirs = process.argv.slice(3); // Дополнительные игнорируемые директории
 
 // Конфигурация игнорирования
 const config = {
-    ignoreDirs: ['.vs', 'node_modules', 'public'], // Игнорируемые директории
+    ignoreDirs: ['.vs', 'node_modules', 'public', '.git', ...additionalIgnoreDirs], // Игнорируемые директории
     ignoreExtensions: ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.bmp', '.ico'], // Игнорируемые расширения
     ignoreFiles: ['package-lock.json'], // Игнорируемые файлы
 };
@@ -15,6 +16,7 @@ const config = {
 // Если не нужно собирать стили, добавляем папку стилей в игнорируемые директории
 if (ignoreStyles) {
     config.ignoreDirs.push('styles');
+    console.log("Папка 'styles' будет игнорироваться при сборе.");
 }
 
 // Функция для сбора структуры проекта
@@ -33,6 +35,8 @@ function getProjectStructure(dir, structure = '', prefix = '') {
             if (!config.ignoreDirs.includes(file)) {
                 const newPrefixRecursive = prefix + (isLast ? '    ' : '│   ');
                 structure = getProjectStructure(filePath, structure, newPrefixRecursive);
+            } else {
+                console.log(`Игнорируем директорию: ${file}`);
             }
         }
     });
@@ -40,22 +44,23 @@ function getProjectStructure(dir, structure = '', prefix = '') {
     return structure;
 }
 
-// Функция для сбора файлов
-function collectFiles(dir, allFiles = []) {
+// Функция для сбора файлов с сохранением структуры
+function collectFiles(dir, relativeDir, allFiles = []) {
     const files = fs.readdirSync(dir);
 
     files.forEach(file => {
         const filePath = path.join(dir, file);
         const stats = fs.statSync(filePath);
+        const relativeFilePath = path.join(relativeDir, file);
 
         if (stats.isDirectory()) {
             if (!config.ignoreDirs.includes(file)) {
-                collectFiles(filePath, allFiles);
+                collectFiles(filePath, relativeFilePath, allFiles);
             }
         } else {
             const fileExtension = path.extname(file).toLowerCase();
             if (!config.ignoreExtensions.includes(fileExtension) && !config.ignoreFiles.includes(file)) {
-                allFiles.push(filePath);
+                allFiles.push(relativeFilePath); // Сохраняем относительный путь
             }
         }
     });
@@ -71,19 +76,19 @@ async function collectProjectFiles(section) {
 
     let structure = '--- Структура проекта ---\n';
     let allFiles = [];
-    let outputFileName = 'game-full.txt'; // Имя файла по умолчанию
+    let outputFileName = ignoreStyles ? 'game-full-no-styles.txt' : 'game-full.txt'; // Имя файла с учетом флага
 
     if (section === 'frontend') {
         structure += getProjectStructure(srcDir);
-        allFiles = collectFiles(srcDir);
-        outputFileName = 'game-front.txt';
+        allFiles = collectFiles(srcDir, 'src'); // Указываем относительный путь
+        outputFileName = ignoreStyles ? 'game-front-no-styles.txt' : 'game-front.txt';
     } else if (section === 'backend') {
         structure += getProjectStructure(backendDir);
-        allFiles = collectFiles(backendDir);
+        allFiles = collectFiles(backendDir, 'backend'); // Указываем относительный путь
         outputFileName = 'game-back.txt';
     } else {
         structure += getProjectStructure(rootDir);
-        allFiles = [...collectFiles(srcDir), ...collectFiles(backendDir)];
+        allFiles = [...collectFiles(srcDir, 'src'), ...collectFiles(backendDir, 'backend')]; // Указываем относительный путь
     }
 
     structure += '\n--- Содержимое файлов ---\n';
@@ -101,10 +106,13 @@ async function collectProjectFiles(section) {
 
     for (const filePath of allFiles) {
         try {
-            const content = await fs.promises.readFile(filePath, 'utf8');
+            // Используем полный путь к файлу для чтения, но сохраняем структуру
+            const content = await fs.promises.readFile(path.join(rootDir, filePath), 'utf8');
+            writeStream.write(`--- Содержимое файла: ${filePath} ---\n`); // Заголовок для файла
             writeStream.write(content + '\n');
         } catch (err) {
             console.error(`Ошибка чтения файла ${filePath}: ${err.message}`);
+            writeStream.write(`Ошибка чтения файла ${filePath}: ${err.message}\n`); // Запись ошибки в файл
         }
     }
 
