@@ -1,30 +1,19 @@
-/* frontend/src/styles/HealthBar.css */
+/* src/styles/HealthBar.css */
 
 .health-bar-container {
   position: relative;
   width: 100%;
+  max-width: 300px; /* Ширина полоски здоровья */
   height: 25px;
-  background-color: #1e3d24;
+  background-color: #333; /* Затемнённый фон */
   border-radius: 5px;
   overflow: hidden;
   margin-bottom: 10px;
 }
 
-.health-bar {
+.health-bar-fill {
   height: 100%;
-  transition: width 1s ease, background-color 0.5s ease;
-}
-
-.high-health {
-  background-color: #28a745; /* Зеленый цвет для полного здоровья */
-}
-
-.normal-health {
-  background-color: #ffc107; /* Желтый цвет для нормального здоровья */
-}
-
-.low-health {
-  background-color: #dc3545; /* Красный цвет для низкого уровня здоровья */
+  transition: width 0.5s ease, background-color 0.5s ease; /* Плавный переход ширины и цвета */
 }
 
 .health-bar-text {
@@ -36,4 +25,18 @@
   top: 0;
   left: 0;
   line-height: 25px; /* Центрирование текста */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Лёгкая тень текста для контраста */
+}
+
+/* Добавим разные цвета для фоновых градиентов при низком здоровье */
+.health-bar-container.green {
+  background-color: #1f8e33; /* Зелёный для фона */
+}
+
+.health-bar-container.yellow {
+  background-color: #e6b800; /* Жёлтый для фона */
+}
+
+.health-bar-container.red {
+  background-color: #b30000; /* Красный для фона */
 }

@@ -4,6 +4,7 @@ import { Router } from 'express';
 import {
   createBattle,
   playerAttack,
+  monsterAttack, // Добавьте импорт monsterAttack
   getBattleById,
   getActiveBattleByPlayerId,
   saveBattleLog,
@@ -17,14 +18,17 @@ const router = Router();
 // Маршрут для создания битвы
 router.post('/', auth, createBattle);
 
-// Маршрут для атаки в битве
-router.post('/:battleId/attack', auth, playerAttack);
+// Маршрут для атаки игрока
+router.post('/:battleId/playerAttack', auth, playerAttack);
+
+// Маршрут для атаки монстра
+router.post('/:battleId/monsterAttack', auth, monsterAttack);
 
 // Маршрут для получения битвы по ID
 router.get('/:battleId', auth, getBattleById);
 
 // Маршрут для получения активной битвы игрока
-router.get('/active', auth, getActiveBattleByPlayerId); // Заменили protect на auth
+router.get('/active/player', auth, getActiveBattleByPlayerId);
 
 // Маршрут для сохранения лога битвы
 router.post('/:battleId/log', auth, saveBattleLog);
@@ -33,6 +37,6 @@ router.post('/:battleId/log', auth, saveBattleLog);
 router.delete('/:battleId', auth, deleteBattle);
 
 // Маршрут для удаления всех завершённых битв игрока
-router.delete('/completed', auth, deleteCompletedBattles);
+router.delete('/completed/player', auth, deleteCompletedBattles);
 
 export default router;

@@ -1,10 +1,14 @@
-// src/components/Login.tsx
+// Причина проблемы:
+// Ошибка возникает из-за того, что передаваемый объект игрока не содержит всех необходимых свойств, которые ожидает интерфейс `Player`, особенно отсутствует `currentExp`.
+// Чтобы устранить ошибку, нужно убедиться, что при создании объекта игрока добавляются все необходимые свойства, включая `currentExp`.
+
+// Измененный файл Login.tsx
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginPlayer } from '../api/api';
 import { useDispatch } from 'react-redux';
-import { setPlayer } from '../store/playerSlice'; // Убедитесь, что setPlayer определен
+import { setPlayer } from '../store/playerSlice';
 import '../styles/Login.css';
 
 const Login: React.FC = () => {
@@ -27,10 +31,12 @@ const Login: React.FC = () => {
       const response = await loginPlayer({ name, password });
 
       if (response && response.player && response.token) {
-        // Преобразуем id в число
+        // Преобразуем id в число и добавляем недостающие свойства
         const player = {
           ...response.player,
           id: Number(response.player.id),
+          currentExp: response.player.experience || 0, // Добавляем значение для currentExp
+          backpack: response.player.backpack || [], // Добавляем значение для рюкзака
         };
 
         // Сохраняем токен в localStorage

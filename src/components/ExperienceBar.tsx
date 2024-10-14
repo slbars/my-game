@@ -9,7 +9,7 @@ interface ExperienceBarProps {
 }
 
 const ExperienceBar: React.FC<ExperienceBarProps> = ({ currentExp, level }) => {
-  const expForNextLevel = level * 100; // 100 опыта для каждого уровня
+  const expForNextLevel = level * 100;
   const expPercentage = Math.min((currentExp / expForNextLevel) * 100, 100);
 
   return (
@@ -18,11 +18,10 @@ const ExperienceBar: React.FC<ExperienceBarProps> = ({ currentExp, level }) => {
         className="experience-bar"
         style={{ width: `${expPercentage}%` }}
       ></div>
-      <div className="experience-bar-text">
-        {currentExp} / {expForNextLevel}
-      </div>
     </div>
   );
 };
 
 export default ExperienceBar;
+
+

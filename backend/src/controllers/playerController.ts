@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Player from '../models/Player'; // Импортируем модель игрока
 import dotenv from 'dotenv';
-import AuthenticatedRequest from '../middleware/auth';
+import { AuthRequest } from '../middleware/auth';
 
 dotenv.config(); // Загружаем переменные среды из файла .env
 

@@ -11,5 +11,5 @@
     "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "src/components"] // Исключаем фронтенд файлы
 }

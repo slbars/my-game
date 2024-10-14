@@ -6,34 +6,32 @@ import '../styles/HealthBar.css';
 interface HealthBarProps {
   currentHealth: number;
   maxHealth: number;
-  type?: 'player' | 'monster';
 }
 
-const HealthBar: React.FC<HealthBarProps> = ({ currentHealth, maxHealth, type = 'player' }) => {
-  const healthPercentage = currentHealth
-    ? Math.min((currentHealth / maxHealth) * 100, 100)
-    : 0;
+const HealthBar: React.FC<HealthBarProps> = ({ currentHealth, maxHealth }) => {
+  const healthPercentage = (currentHealth / maxHealth) * 100;
 
-  let healthClass = 'high-health';
-
-  if (healthPercentage <= 30) {
-    healthClass = 'low-health';
-  } else if (healthPercentage <= 70) {
-    healthClass = 'normal-health';
+  let barColor;
+  if (healthPercentage > 50) {
+    barColor = 'green';
+  } else if (healthPercentage > 20) {
+    barColor = 'yellow';
+  } else {
+    barColor = 'red';
   }
-
-  // Дополнительный класс для монстра
-  const barClass = type === 'monster' ? 'monster-health-bar' : '';
 
   return (
     <div className="health-bar-container">
       <div
-        className={`health-bar ${healthClass} ${barClass}`}
-        style={{ width: `${healthPercentage}%` }}
+        className="health-bar-fill"
+        style={{
+          width: `${healthPercentage}%`,
+          backgroundColor: barColor
+        }}
       ></div>
-      <div className="health-bar-text">
-        {currentHealth || 0} / {maxHealth}
-      </div>
+      <span className="health-bar-text">
+        {currentHealth} / {maxHealth}
+      </span>
     </div>
   );
 };

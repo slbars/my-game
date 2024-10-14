@@ -1,4 +1,4 @@
-// src/components/Register.tsx
+// Измененный файл Register.tsx
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,12 @@ const Register: React.FC = () => {
       const response = await createPlayer({ name, password });
 
       if (response && response.player) {
-        dispatch(setPlayer(response.player));
+        // Добавляем недостающее свойство currentExp
+        const completePlayer = {
+          ...response.player,
+          currentExp: response.player.experience || 0,
+        };
+        dispatch(setPlayer(completePlayer));
         navigate('/location');
       } else {
         throw new Error('Ошибка при регистрации: данные игрока не найдены.');

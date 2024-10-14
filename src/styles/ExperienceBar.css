@@ -2,14 +2,13 @@
 
 .experience-bar-container {
   position: relative;
-  width: 100%;
+  width: 6cm;
   height: 25px; /* Убедитесь, что высота соответствует компоненту */
   background-color: #ddd;
   border-radius: 5px;
   overflow: hidden;
   margin-bottom: 10px;
 }
-
 .experience-bar {
   height: 100%;
   background-color: #e58e0a; /* Жёлтый цвет для опыта */

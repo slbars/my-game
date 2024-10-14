@@ -1,21 +1,19 @@
 // src/components/BattleResultModal.tsx
 
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveBattleLog } from '../api/api'; // Теперь функция корректно импортируется
-import { RootState } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
+import { saveBattleLog } from '../api/api';
 import { setBattle, setBattleLog } from '../store/battleSlice';
 import '../styles/BattleResultModal.css';
 
 const BattleResultModal: React.FC = () => {
-  const dispatch = useDispatch();
-  const battle = useSelector((state: RootState) => state.battle.currentBattle);
-  const battleLog = useSelector((state: RootState) => state.battle.battleLog);
+  const dispatch = useAppDispatch();
+  const battle = useAppSelector(state => state.battle.currentBattle);
+  const battleLog = useAppSelector(state => state.battle.battleLog);
 
   const handleClose = async () => {
     if (battle) {
       try {
-        // Передаём два аргумента — battleId и battleLog
         await saveBattleLog(battle.id, battleLog);
         dispatch(setBattle(null));
         dispatch(setBattleLog([]));
@@ -30,15 +28,12 @@ const BattleResultModal: React.FC = () => {
   }
 
   return (
-    <div className="battle-result-modal">
-      <div className="modal-content">
-        <h3>Результат боя</h3>
-        <p>{battle.battleResult}</p>
-        <button onClick={handleClose} className="close-button">
+      <div className="battle-result-modal">
+        <h2>{battle.battleResult === 'win' ? 'Победа!' : 'Поражение!'}</h2>
+        <button onClick={handleClose} className="btn-exit">
           Закрыть
         </button>
       </div>
-    </div>
   );
 };
 

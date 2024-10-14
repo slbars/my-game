@@ -19,6 +19,16 @@ if (ignoreStyles) {
     console.log("Папка 'styles' будет игнорироваться при сборе.");
 }
 
+// Добавляем игнорируемые папки в зависимости от секции
+if (section === 'frontend') {
+    config.ignoreDirs.push('build'); // Игнорируем папку build для фронтенда
+} else if (section === 'backend') {
+    config.ignoreDirs.push('dist'); // Игнорируем папку dist для бэкенда
+} else if (section === 'all') {
+    // Игнорируем папки для обеих секций
+    config.ignoreDirs.push('build', 'dist');
+}
+
 // Функция для сбора структуры проекта
 function getProjectStructure(dir, structure = '', prefix = '') {
     const files = fs.readdirSync(dir);

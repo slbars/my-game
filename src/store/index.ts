@@ -1,12 +1,12 @@
-// src/index/index.ts
+// src/store/index.ts
 
 import { configureStore } from '@reduxjs/toolkit';
 import playerReducer from './playerSlice';
 import battleReducer from './battleSlice';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 
-// Создание Redux index
-const index = configureStore({
+// Создание Redux store
+const store = configureStore({
   reducer: {
     player: playerReducer,
     battle: battleReducer,
@@ -14,12 +14,12 @@ const index = configureStore({
 });
 
 // Типы для RootState и AppDispatch
-export type RootState = ReturnType<typeof index.getState>;
-export type AppDispatch = typeof index.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 // Кастомные хуки для использования в компонентах
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-// Экспорт index по умолчанию
-export default index;
+// Экспортируем store по умолчанию
+export default store;

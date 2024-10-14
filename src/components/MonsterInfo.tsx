@@ -1,30 +1,26 @@
 // src/components/MonsterInfo.tsx
 
 import React from 'react';
+import HealthBar from './HealthBar';
 import '../styles/MonsterInfo.css';
 
 interface MonsterInfoProps {
-  name: string;
-  level: number;
-  currentHealth: number;
-  maxHealth: number;
+    name: string;
+    level: number;
+    currentHealth: number;
+    maxHealth: number;
 }
 
 const MonsterInfo: React.FC<MonsterInfoProps> = ({ name, level, currentHealth, maxHealth }) => {
-  const healthPercentage = (currentHealth / maxHealth) * 100;
+    const displayedHealth = currentHealth >= 0 ? currentHealth : 0;
+    const displayedMaxHealth = maxHealth > 0 ? maxHealth : 1;
 
-  return (
-    <div className="monster-info-container">
-      <h3>{name} [Уровень {level}]</h3>
-      <div className="health-bar">
-        <div
-          className="health-bar-fill"
-          style={{ width: `${healthPercentage}%` }}
-        ></div>
-      </div>
-      <p>{currentHealth} / {maxHealth} HP</p>
-    </div>
-  );
+    return (
+        <div className="monster-info-container">
+            <h3>{name} [Уровень {level}]</h3>
+            <HealthBar currentHealth={displayedHealth} maxHealth={displayedMaxHealth} />
+        </div>
+    );
 };
 
 export default MonsterInfo;

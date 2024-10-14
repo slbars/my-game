@@ -3,12 +3,18 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PlayerInfo from './PlayerInfo';
+import { useAppSelector } from '../store';
 import ButtonMenu from './ButtonMenu';
 import GameContent from './GameContent';
 import ProtectedRoute from './ProtectedRoute';
 import '../styles/MainLayout.css'; // Подключаем стили
 
 const MainLayout: React.FC = () => {
+  const player = useAppSelector((state) => state.player.player);
+
+  if (!player) {
+    return <div>Загрузка...</div>;
+  }
   return (
     <div className="main-layout-container">
       {/* Заголовок игры */}
@@ -21,7 +27,7 @@ const MainLayout: React.FC = () => {
         {/* Левая панель */}
         <aside className="sidebar">
           <div className="player-info-container">
-            <PlayerInfo />
+            <PlayerInfo player={player} />
           </div>
           <div className="button-menu-container">
             <ButtonMenu />
@@ -74,3 +80,4 @@ const MainLayout: React.FC = () => {
 };
 
 export default MainLayout;
+

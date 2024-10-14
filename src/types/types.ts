@@ -2,7 +2,7 @@
 
 export interface LoginResponse {
   player: {
-    id: string; // Если бэкенд возвращает строку, измените на string
+    id: string; // Если бэкенд возвращает строку, оставьте string
     name: string;
     level: number;
     experience: number;
@@ -15,13 +15,13 @@ export interface LoginResponse {
 
 // Интерфейс игрока
 export interface Player {
-  id: number; // Измените на number, если ожидается числовое значение
+  id: number; // Числовой ID
   name: string;
   level: number;
   experience: number;
   maxHealth: number;
   currentHealth: number;
-  backpack: any[]; // Можете задать более точный тип для элементов рюкзака
+  backpack: any[]; // Можно уточнить тип элементов
 }
 
 // Интерфейс монстра
@@ -31,7 +31,11 @@ export interface Monster {
   level: number;
   maxHealth: number;
   currentHealth: number;
+  attack: number;
+  defense: number;
 }
+
+// src/types/types.ts
 
 export interface Battle {
   id: number;
@@ -49,7 +53,19 @@ export interface Battle {
   createdAt?: Date;
   updatedAt?: Date;
 
+  player: Player; // Добавляем свойство player
   monster: Monster;
+
+  playerDamage?: number; // Добавлено
+  monsterDamage?: number; // Добавлено
+}
+
+// Интерфейс состояния битвы
+export interface BattleState {
+  currentBattle: Battle | null;
+  battleLog: string[];
+  status: 'idle' | 'loading' | 'failed' | 'inBattle';
+  error: string | null;
 }
 
 // Дополнительные типы для API
@@ -65,4 +81,16 @@ export interface BattleData {
 export interface BattleLogData {
   battleId: number;
   battleLog: string[];
+}
+
+// Интерфейс ответа на атаку
+export interface AttackResponse {
+  battleLog: string[];
+  playerHealth: number;
+  monsterHealth: number;
+  experienceGained: number;
+  battleResult: string | null;
+  playerTotalDamage: number;
+  monsterTotalDamage: number;
+  monster: Monster;
 }
