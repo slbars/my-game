@@ -1,4 +1,4 @@
-// src/middleware/errorHandler.ts
+// backend/src/middleware/errorHandler.ts
 
 import { Request, Response, NextFunction } from 'express';
 
@@ -8,10 +8,12 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.error('Ошибка:', err); // Логируем полную информацию об ошибке
+
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode).json({
     message: err.message,
-    // stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
-    // Опционально: убрать стек в продакшене
+    // В продакшн-среде лучше не отправлять стек ошибок
+    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 };

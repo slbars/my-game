@@ -2,29 +2,30 @@
 
 export interface LoginResponse {
   player: {
-    id: string; // Если бэкенд возвращает строку, оставьте string
+    id: string;
     name: string;
     level: number;
     experience: number;
     maxHealth: number;
     currentHealth: number;
     backpack: any[];
+    location: string; // Добавлено поле location
   };
   token: string;
 }
 
-// Интерфейс игрока
 export interface Player {
-  id: number; // Числовой ID
+  id: number;
   name: string;
   level: number;
   experience: number;
   maxHealth: number;
   currentHealth: number;
-  backpack: any[]; // Можно уточнить тип элементов
+  backpack: any[];
+  location: string; // Добавлено поле location
+  currentExp?: number;
 }
 
-// Интерфейс монстра
 export interface Monster {
   id: number;
   name: string;
@@ -35,7 +36,13 @@ export interface Monster {
   defense: number;
 }
 
-// src/types/types.ts
+export interface BattleLogEntry {
+  id: number;
+  battleId: number;
+  messages: string[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface Battle {
   id: number;
@@ -43,32 +50,33 @@ export interface Battle {
   monsterId: number;
   playerHealth: number;
   monsterHealth: number;
-  battleLog: string[];
+  battleLogs: {
+    message: string[];
+  };
   isPlayerTurn: boolean;
   battleResult: string | null;
-  turnEndTime: Date | null;
+  turnEndTime: string | null;
   experienceGained: number;
   playerTotalDamage: number;
   monsterTotalDamage: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-
-  player: Player; // Добавляем свойство player
+  player: Player;
   monster: Monster;
-
-  playerDamage?: number; // Добавлено
-  monsterDamage?: number; // Добавлено
 }
 
-// Интерфейс состояния битвы
+export interface BattleLog {
+  id: number;
+  battleId: number;
+  message: string;
+  createdAt: string;
+}
+
 export interface BattleState {
   currentBattle: Battle | null;
-  battleLog: string[];
+  battleLog: BattleLogEntry[];
   status: 'idle' | 'loading' | 'failed' | 'inBattle';
   error: string | null;
 }
 
-// Дополнительные типы для API
 export interface Credentials {
   name: string;
   password: string;
@@ -83,14 +91,27 @@ export interface BattleLogData {
   battleLog: string[];
 }
 
-// Интерфейс ответа на атаку
 export interface AttackResponse {
   battleLog: string[];
   playerHealth: number;
   monsterHealth: number;
   experienceGained: number;
-  battleResult: string | null;
+  battleResult: 'win' | 'lose' | null;
   playerTotalDamage: number;
   monsterTotalDamage: number;
   monster: Monster;
+  playerDamage: number;
+  monsterDamage: number;
+}
+
+export interface PlayerInfo {
+  name: string;
+  level: number;
+  createdAt: string;
+  wins: number;
+  loses: number;
+}
+
+export interface BattleLogs {
+  messages: string[];
 }

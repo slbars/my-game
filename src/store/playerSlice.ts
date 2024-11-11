@@ -1,132 +1,119 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getPlayerById, loginPlayer as apiLoginPlayer } from '../api/api';
-import { LoginResponse } from '../types/types';
-import { RootState } from './index';
+// src/store/playerSlice.ts
 
-// Интерфейс состояния игрока, представляющий основные свойства игрока
-interface Player {
-  id: number;
-  name: string;
-  level: number;
-  currentHealth: number;
-  maxHealth: number;
-  currentExp: number;
-  experience: number;
-  backpack: any[];
-}
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { getCurrentPlayer, loginPlayer as apiLoginPlayer } from '../api/api';
+import { LoginResponse, Player } from '../types/types';
 
 interface PlayerState {
   player: Player | null;
+  token: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: PlayerState = {
-  player: null, // Изначально без игрока
+  player: null,
+  token: localStorage.getItem('token'), // Инициализируем из localStorage
   loading: false,
   error: null,
 };
 
-// Асинхронное действие для логина
+// Асинхронный thunk для входа игрока
 export const loginPlayer = createAsyncThunk(
   'player/loginPlayer',
   async (credentials: { name: string; password: string }, { rejectWithValue }) => {
     try {
-      // Запрос на сервер для логина игрока
       const response: LoginResponse = await apiLoginPlayer(credentials);
-
-      // Преобразуем id игрока из строки в число, чтобы иметь единый формат
-      const player = {
+      const player: Player = {
         ...response.player,
-        id: Number(response.player.id), // Преобразуем id в число
-        currentExp: response.player.experience || 0, // Добавляем значение текущего опыта
-        backpack: response.player.backpack || [], // Добавляем значение для рюкзака
+        id: Number(response.player.id),
+        backpack: response.player.backpack || [],
       };
-
-      return { player, token: response.token }; // Возвращаем данные игрока и токен
+      const token = response.token;
+      return { player, token };
     } catch (err: any) {
-      // Возвращаем ошибку, если логин не удался
       return rejectWithValue(err.response?.data?.message || 'Ошибка при входе');
     }
   }
 );
 
-// Асинхронное действие для получения текущего игрока
+// Асинхронный thunk для получения текущего игрока
 export const fetchCurrentPlayer = createAsyncThunk(
   'player/fetchCurrentPlayer',
   async (_, { rejectWithValue }) => {
     try {
-      // Запрос на сервер для получения информации о текущем игроке
-      const response = await getPlayerById();
-      const player = {
+      const response = await getCurrentPlayer();
+      const player: Player = {
         ...response.player,
-        currentExp: response.player.experience || 0, // Добавляем значение текущего опыта
-        backpack: response.player.backpack || [], // Добавляем значение для рюкзака
+        backpack: response.player.backpack || [],
       };
-      return player; // Возвращаем данные игрока
+      return player;
     } catch (err: any) {
-      // Возвращаем ошибку, если не удалось получить данные игрока
+      console.error('Ошибка в fetchCurrentPlayer:', err);
       return rejectWithValue(err.response?.data?.message || 'Ошибка при получении игрока');
     }
   }
 );
 
-// Создание slice для управления состоянием игрока
 const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
-    // Очистка данных игрока (например, при логауте)
     clearPlayer: (state) => {
       state.player = null;
+      state.token = null;
       state.error = null;
       state.loading = false;
-      localStorage.removeItem('token'); // Удаление токена при очистке
+      localStorage.removeItem('token'); // Удаляем токен из localStorage при выходе
+      localStorage.removeItem('userId'); // Удаляем userId из localStorage при выходе
     },
-    // Установка данных игрока вручную
     setPlayer: (state, action: PayloadAction<Player>) => {
       state.player = action.payload;
-    }
+      localStorage.setItem('userId', action.payload.id.toString()); // Сохраняем userId
+    },
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+      localStorage.setItem('token', action.payload); // Сохраняем токен в localStorage
+    },
   },
   extraReducers: (builder) => {
-    // Логин: обработка состояний запроса
+    // Обработка состояния loginPlayer
     builder.addCase(loginPlayer.pending, (state) => {
-      state.loading = true; // Устанавливаем состояние загрузки
-      state.error = null; // Сбрасываем ошибки
+      state.loading = true;
+      state.error = null;
     });
     builder.addCase(loginPlayer.fulfilled, (state, action) => {
-      state.loading = false; // Останавливаем загрузку
-      state.player = action.payload.player; // Устанавливаем данные игрока при успешном логине
+      state.loading = false;
+      state.player = action.payload.player;
+      state.token = action.payload.token;
+      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('userId', action.payload.player.id.toString());
     });
     builder.addCase(loginPlayer.rejected, (state, action) => {
-      state.loading = false; // Останавливаем загрузку
-      state.error = action.payload as string; // Устанавливаем ошибку
+      state.loading = false;
+      state.error = action.payload as string;
     });
 
-    // Получение текущего игрока: обработка состояний запроса
+    // Обработка состояния fetchCurrentPlayer
     builder.addCase(fetchCurrentPlayer.pending, (state) => {
-      state.loading = true; // Устанавливаем состояние загрузки
-      state.error = null; // Сбрасываем ошибки
+      state.loading = true;
+      state.error = null;
     });
     builder.addCase(fetchCurrentPlayer.fulfilled, (state, action) => {
-      state.loading = false; // Останавливаем загрузку
-      state.player = action.payload; // Устанавливаем данные текущего игрока
+      state.loading = false;
+      state.player = action.payload;
+      localStorage.setItem('userId', action.payload.id.toString());
     });
     builder.addCase(fetchCurrentPlayer.rejected, (state, action) => {
-      state.loading = false; // Останавливаем загрузку
-      state.error = action.payload as string; // Устанавливаем ошибку
-
-      // Добавляем проверку на ошибку авторизации и перенаправляем пользователя на логин
-      if (action.payload === 'Ошибка при получении игрока') {
-        localStorage.removeItem('token'); // Удаление токена при ошибке авторизации
-        window.location.href = '/login'; // Перенаправление на страницу логина
-      }
+      state.loading = false;
+      state.error = action.payload as string;
+      state.player = null;
+      state.token = null;
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
     });
   },
 });
 
-// Экспортируем действия для использования в компонентах
-export const { clearPlayer, setPlayer } = playerSlice.actions;
-
-// Экспортируем редьюсер для добавления в store
+export const { clearPlayer, setPlayer, setToken } = playerSlice.actions;
 export default playerSlice.reducer;

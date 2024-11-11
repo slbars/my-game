@@ -1,7 +1,14 @@
-// backend/models/Monster.ts
+// src/models/Monster.ts
 
-import { Model, DataTypes, Optional } from 'sequelize';
-import sequelize from '../config/database';
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  HasMany,
+} from 'sequelize-typescript';
+import { Optional } from 'sequelize';
+import { Battle } from './Battle';
 
 export interface MonsterAttributes {
   id: number;
@@ -10,58 +17,69 @@ export interface MonsterAttributes {
   maxHealth: number;
   currentHealth: number;
   experience: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export interface MonsterCreationAttributes extends Optional<MonsterAttributes, 'id' | 'currentHealth' | 'experience'> {}
+export interface MonsterCreationAttributes
+  extends Optional<
+    MonsterAttributes,
+    'id' | 'currentHealth' | 'createdAt' | 'updatedAt'
+  > {}
 
-class Monster extends Model<MonsterAttributes, MonsterCreationAttributes> implements MonsterAttributes {
+@Table({
+  tableName: 'Monsters',
+  freezeTableName: true,
+  timestamps: true,
+})
+export class Monster
+  extends Model<MonsterAttributes, MonsterCreationAttributes>
+  implements MonsterAttributes
+{
+  @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  })
   public id!: number;
+
+  @Column({
+    type: DataType.STRING(128),
+    allowNull: false,
+  })
   public name!: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 1,
+  })
   public level!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 100,
+  })
   public maxHealth!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 100,
+  })
   public currentHealth!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 10,
+  })
   public experience!: number;
+
+  @HasMany(() => Battle)
+  public battles!: Battle[];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
-
-Monster.init({
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: new DataTypes.STRING(128),
-    allowNull: false,
-    unique: true,
-  },
-  level: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 1,
-  },
-  maxHealth: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 100,
-  },
-  currentHealth: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 100,
-  },
-  experience: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 10,
-  },
-}, {
-  sequelize,
-  tableName: 'Monsters',
-  freezeTableName: true,
-  timestamps: true,
-});
-
-export default Monster;

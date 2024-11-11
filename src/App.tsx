@@ -1,42 +1,36 @@
 // src/App.tsx
 
 import React, { useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useAppDispatch } from './store'; // Импортируем кастомный хук для отправки действий
-import { fetchCurrentPlayer } from './store/playerSlice';
-import Login from './components/Login';
-import Register from './components/Register';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from './store';
+import { createSocket, disconnectSocket } from './socket';
 import MainLayout from './components/MainLayout';
-import ProtectedRoute from './components/ProtectedRoute';
+import { useNavigate } from 'react-router-dom';
 
 const App: React.FC = () => {
-  const dispatch = useAppDispatch();
+  const token = useSelector((state: RootState) => state.player.token);
+  const socketConnected = useSelector((state: RootState) => state.socket.connected);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      dispatch(fetchCurrentPlayer());
-    } else {
+    if (!token) {
       navigate('/login');
+    } else {
+      createSocket(token, dispatch);
     }
-  }, [dispatch, navigate]);
 
+    return () => {
+      disconnectSocket();
+    };
+  }, [token, navigate, dispatch]);
+
+  // Рендерим MainLayout только при наличии токена и подключения сокета
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route
-        path="/*"
-        element={
-          <ProtectedRoute>
-            <MainLayout />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <div className="App">
+      {token && socketConnected && <MainLayout />}
+    </div>
   );
 };
 
 export default App;
-

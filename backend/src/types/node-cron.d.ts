@@ -1,4 +1,4 @@
-// src/types/node-cron.d.ts
+// backend/src/types/node-cron.d.ts
 
 declare module 'node-cron' {
   import { Job } from 'node-cron';

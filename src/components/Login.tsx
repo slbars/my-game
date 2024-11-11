@@ -1,92 +1,69 @@
-// Причина проблемы:
-// Ошибка возникает из-за того, что передаваемый объект игрока не содержит всех необходимых свойств, которые ожидает интерфейс `Player`, особенно отсутствует `currentExp`.
-// Чтобы устранить ошибку, нужно убедиться, что при создании объекта игрока добавляются все необходимые свойства, включая `currentExp`.
+// src/components/Login.tsx
 
-// Измененный файл Login.tsx
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginPlayer } from '../api/api';
-import { useDispatch } from 'react-redux';
-import { setPlayer } from '../store/playerSlice';
+import { useAppDispatch, useAppSelector } from '../store';
+import { RootState } from '../store';import { loginPlayer } from '../store/playerSlice';
 import '../styles/Login.css';
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const { player } = useAppSelector((state) => state.player);
+  const token = localStorage.getItem('token');
   const [name, setName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (player || token) {
+      navigate('/location');
+    }
+  }, [player, token, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
-    if (!name || !password) {
-      setError('Все поля обязательны для заполнения');
-      return;
-    }
-
     try {
-      const response = await loginPlayer({ name, password });
-
-      if (response && response.player && response.token) {
-        // Преобразуем id в число и добавляем недостающие свойства
-        const player = {
-          ...response.player,
-          id: Number(response.player.id),
-          currentExp: response.player.experience || 0, // Добавляем значение для currentExp
-          backpack: response.player.backpack || [], // Добавляем значение для рюкзака
-        };
-
-        // Сохраняем токен в localStorage
-        localStorage.setItem('token', response.token);
-
-        // Обновляем состояние игрока в Redux
-        dispatch(setPlayer(player));
-
-        // Переход на страницу с локацией
-        navigate('/location');
-      } else {
-        throw new Error('Ошибка при входе: данные игрока не найдены.');
-      }
+      await dispatch(loginPlayer({ name, password })).unwrap();
+      navigate('/location');
     } catch (err: any) {
-      setError('Ошибка при входе. Проверьте имя пользователя и пароль.');
-      console.error(err);
+      setError(err);
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Вход в игру</h2>
-      <form onSubmit={handleSubmit}>
-        {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Имя"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="form-input"
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="form-input"
-          />
-        </div>
-        <button type="submit" className="login-button">
-          Войти
-        </button>
-      </form>
-      <p className="register-link">
-        Нет аккаунта? <Link to="/register">Зарегистрируйтесь</Link>
-      </p>
-    </div>
+      <div className="login-container">
+        <h2>Вход</h2>
+        <form onSubmit={handleSubmit}>
+          {error && <p className="error-message">{error}</p>}
+          <div className="form-group">
+            <input
+                type="text"
+                placeholder="Имя"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <input
+                type="password"
+                placeholder="Пароль"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-input"
+            />
+          </div>
+          <button type="submit" className="login-button">
+            Войти
+          </button>
+        </form>
+        <p className="register-link">
+          Нет аккаунта? <Link to="/register">Зарегистрируйтесь</Link>
+        </p>
+      </div>
   );
 };
 

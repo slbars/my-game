@@ -2,14 +2,15 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs",
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "./dist",        // Каталог для выходных файлов
+    "rootDir": "./src",        // Каталог исходных файлов
     "strict": true,
+    "experimentalDecorators": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "typeRoots": ["./src/types", "./node_modules/@types"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/components"] // Исключаем фронтенд файлы
+  "include": ["src/**/*"],     // Убедитесь, что указан относительный путь
+  "exclude": ["node_modules", "dist", "src/components"]
 }

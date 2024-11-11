@@ -1,9 +1,18 @@
-// backend/models/Battle.ts
+// backend/src/models/Battle.ts
 
-import { Model, DataTypes, Optional } from 'sequelize';
-import sequelize from '../config/database';
-import Player from './Player';
-import Monster from './Monster';
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+  HasMany,
+} from 'sequelize-typescript';
+import { Optional } from 'sequelize';
+import { Player } from './Player';
+import { Monster } from './Monster';
+import { BattleLog } from './BattleLog';
 
 export interface BattleAttributes {
   id: number;
@@ -11,105 +20,142 @@ export interface BattleAttributes {
   monsterId: number;
   playerHealth: number;
   monsterHealth: number;
-  battleLog: string[];
   isPlayerTurn: boolean;
-  battleResult: string | null;
+  battleResult: 'win' | 'lose' | null;
   turnEndTime: Date | null;
   experienceGained: number;
   playerTotalDamage: number;
   monsterTotalDamage: number;
+  playerDamage: number;
+  monsterDamage: number;
+  monsterHasAttacked: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface BattleCreationAttributes extends Optional<BattleAttributes, 'id' | 'playerHealth' | 'monsterHealth' | 'battleLog' | 'isPlayerTurn' | 'battleResult' | 'turnEndTime' | 'experienceGained' | 'playerTotalDamage' | 'monsterTotalDamage'> {}
+export interface BattleCreationAttributes
+  extends Optional<
+    BattleAttributes,
+    | 'id'
+    | 'battleResult'
+    | 'turnEndTime'
+    | 'experienceGained'
+    | 'playerTotalDamage'
+    | 'monsterTotalDamage'
+    | 'playerDamage'
+    | 'monsterDamage'
+    | 'monsterHasAttacked'
+    | 'createdAt'
+    | 'updatedAt'
+  > {}
 
-class Battle extends Model<BattleAttributes, BattleCreationAttributes> implements BattleAttributes {
+@Table({ tableName: 'Battles', freezeTableName: true, timestamps: true })
+export class Battle extends Model<BattleAttributes, BattleCreationAttributes> implements BattleAttributes {
+  @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  })
   public id!: number;
+
+  @ForeignKey(() => Player)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
   public playerId!: number;
+
+  @ForeignKey(() => Monster)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
   public monsterId!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 100,
+  })
   public playerHealth!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 100,
+  })
   public monsterHealth!: number;
-  public battleLog!: string[];
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
   public isPlayerTurn!: boolean;
-  public battleResult!: string | null;
+
+  @Column({
+    type: DataType.ENUM('win', 'lose'),
+    allowNull: true,
+  })
+  public battleResult!: 'win' | 'lose' | null;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
   public turnEndTime!: Date | null;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
   public experienceGained!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
   public playerTotalDamage!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
   public monsterTotalDamage!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  public playerDamage!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  public monsterDamage!: number;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  public monsterHasAttacked!: boolean;
+
+  @BelongsTo(() => Player, { as: 'player' })
+  public player!: Player;
+
+  @BelongsTo(() => Monster, { as: 'monster' })
+  public monster!: Monster;
+
+  @HasMany(() => BattleLog, { as: 'battleLogs' })
+  public battleLogs!: BattleLog[];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
-
-Battle.init({
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  playerId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  monsterId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  playerHealth: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 100,
-  },
-  monsterHealth: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 100,
-  },
-  battleLog: {
-    type: DataTypes.JSON,
-    allowNull: false,
-    defaultValue: [],
-  },
-  isPlayerTurn: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-  },
-  battleResult: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  turnEndTime: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
-  experienceGained: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  },
-  playerTotalDamage: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  },
-  monsterTotalDamage: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  },
-}, {
-  sequelize,
-  tableName: 'Battles',
-  freezeTableName: true,
-  timestamps: true,
-});
-
-// Ассоциации (если необходимо)
-Battle.belongsTo(Player, { foreignKey: 'playerId', as: 'player' });
-Battle.belongsTo(Monster, { foreignKey: 'monsterId', as: 'monster' });
-Player.hasMany(Battle, { foreignKey: 'playerId', as: 'battles' });
-Monster.hasMany(Battle, { foreignKey: 'monsterId', as: 'battles' });
-
-export default Battle;

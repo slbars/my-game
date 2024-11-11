@@ -1,6 +1,5 @@
 // src/components/HealthBar.tsx
-
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/HealthBar.css';
 
 interface HealthBarProps {
@@ -9,6 +8,7 @@ interface HealthBarProps {
 }
 
 const HealthBar: React.FC<HealthBarProps> = ({ currentHealth, maxHealth }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const healthPercentage = (currentHealth / maxHealth) * 100;
 
   let barColor;
@@ -21,7 +21,11 @@ const HealthBar: React.FC<HealthBarProps> = ({ currentHealth, maxHealth }) => {
   }
 
   return (
-    <div className="health-bar-container">
+    <div 
+      className="health-bar-container"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div
         className="health-bar-fill"
         style={{
@@ -30,7 +34,7 @@ const HealthBar: React.FC<HealthBarProps> = ({ currentHealth, maxHealth }) => {
         }}
       ></div>
       <span className="health-bar-text">
-        {currentHealth} / {maxHealth}
+        {isHovered ? 'Здоровье' : `${currentHealth} / ${maxHealth}`}
       </span>
     </div>
   );

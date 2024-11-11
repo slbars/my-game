@@ -1,85 +1,85 @@
-// Измененный файл Register.tsx
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../store';
 import { createPlayer } from '../api/api';
-import { useDispatch } from 'react-redux';
 import { setPlayer } from '../store/playerSlice';
 import '../styles/Register.css';
 
 const Register: React.FC = () => {
-  const [name, setName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { player } = useAppSelector((state) => state.player);
+  const token = localStorage.getItem('token');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (player || token) {
+      navigate('/location');
+    }
+  }, [player, token, navigate]);
+
+  const dispatch = useAppDispatch();
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (!name || !password) {
-      setError('Все поля обязательны для заполнения');
-      return;
-    }
+    setLoading(true);
 
     try {
       const response = await createPlayer({ name, password });
+      const { player } = response;
 
-      if (response && response.player) {
-        // Добавляем недостающее свойство currentExp
+      if (player) {
         const completePlayer = {
-          ...response.player,
-          currentExp: response.player.experience || 0,
+          ...player,
+          id: Number(player.id),
+          currentExp: 0,
         };
+
         dispatch(setPlayer(completePlayer));
+        localStorage.setItem('userId', player.id.toString());
         navigate('/location');
       } else {
-        throw new Error('Ошибка при регистрации: данные игрока не найдены.');
+        throw new Error('Ошибка при регистрации: данные игрока или токен не найдены.');
       }
     } catch (err: any) {
       console.error('Ошибка при регистрации:', err);
-      if (err.response && err.response.data) {
-        if (err.response.data.message) {
-          setError(err.response.data.message);
-        } else if (err.response.data.errors) {
-          const messages = err.response.data.errors.map((error: any) => error.msg).join(' ');
-          setError(messages);
-        } else {
-          setError('Ошибка при регистрации. Возможно, имя уже используется.');
-        }
-      } else {
-        setError('Ошибка при регистрации. Возможно, имя уже используется.');
-      }
+      setError(err.message || 'Произошла ошибка при регистрации');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="register-container">
       <h2>Регистрация</h2>
-      <form onSubmit={handleSubmit}>
-        {error && <p className="error-message">{error}</p>}
+      <form onSubmit={handleRegister}>
         <div className="form-group">
+          <label htmlFor="name">Имя</label>
           <input
             type="text"
-            placeholder="Имя"
+            id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="form-input"
+            required
           />
         </div>
         <div className="form-group">
+          <label htmlFor="password">Пароль</label>
           <input
             type="password"
-            placeholder="Пароль"
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="form-input"
+            required
           />
         </div>
-        <button type="submit" className="register-button">
-          Зарегистрироваться
+        <button type="submit" disabled={loading}>
+          {loading ? 'Регистрация...' : 'Зарегистрироваться'}
         </button>
+        {error && <p className="error-message">{error}</p>}
       </form>
     </div>
   );

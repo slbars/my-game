@@ -13,7 +13,15 @@ interface GameContentProps {
 }
 
 const GameContent: React.FC<GameContentProps> = ({ view }) => {
-  const player = useSelector((state: RootState) => state.player.player);
+  const { player, loading, error } = useSelector((state: RootState) => state.player);
+
+  if (loading) {
+    return <div>Загрузка данных игрока...</div>;
+  }
+
+  if (error) {
+    return <div>Ошибка при загрузке данных: {error}</div>;
+  }
 
   if (!player) {
     return <div>Ошибка: данные игрока не загружены.</div>;
@@ -32,5 +40,4 @@ const GameContent: React.FC<GameContentProps> = ({ view }) => {
       return <div>Ошибка: Некорректное представление</div>;
   }
 };
-
 export default GameContent;

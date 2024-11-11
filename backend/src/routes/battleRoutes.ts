@@ -1,13 +1,13 @@
-// src/routes/battleRoutes.ts
+// backend/src/routes/battleRoutes.ts
 
 import { Router } from 'express';
 import {
   createBattle,
   playerAttack,
-  monsterAttack, // Добавьте импорт monsterAttack
+  monsterAttack,
   getBattleById,
-  getActiveBattleByPlayerId,
-  saveBattleLog,
+  getActiveBattleByPlayer,
+  getBattleLog,
   deleteBattle,
   deleteCompletedBattles,
 } from '../controllers/battleController';
@@ -28,15 +28,15 @@ router.post('/:battleId/monsterAttack', auth, monsterAttack);
 router.get('/:battleId', auth, getBattleById);
 
 // Маршрут для получения активной битвы игрока
-router.get('/active/player', auth, getActiveBattleByPlayerId);
+router.get('/active/player', auth, getActiveBattleByPlayer);
 
-// Маршрут для сохранения лога битвы
-router.post('/:battleId/log', auth, saveBattleLog);
+// Маршрут для получения лога битвы
+router.get('/:battleId/log', auth, getBattleLog);
 
-// Маршрут для удаления битвы
+// Удаление битвы
 router.delete('/:battleId', auth, deleteBattle);
 
-// Маршрут для удаления всех завершённых битв игрока
+// Удаление всех завершённых битв игрока
 router.delete('/completed/player', auth, deleteCompletedBattles);
 
 export default router;

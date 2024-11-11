@@ -3,14 +3,27 @@
 .health-bar-container {
   position: relative;
   width: 100%;
-  max-width: 300px; /* Ширина полоски здоровья */
+  max-width: 300px;
   height: 25px;
-  background-color: #333; /* Затемнённый фон */
+  background-color: #333;
   border-radius: 5px;
   overflow: hidden;
   margin-bottom: 10px;
+  cursor: help;
 }
 
+.health-bar-container:hover::after {
+  content: "Здоровье";
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
 .health-bar-fill {
   height: 100%;
   transition: width 0.5s ease, background-color 0.5s ease; /* Плавный переход ширины и цвета */

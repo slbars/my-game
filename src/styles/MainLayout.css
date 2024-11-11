@@ -1,5 +1,8 @@
+/* src/styles/MainLayout.css */
+
 /* Основной контейнер */
 .main-layout-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +15,10 @@
 .game-header {
   padding: 20px 0;
   text-align: center;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .game-title {
@@ -23,43 +30,49 @@
 /* Основной контент */
 .main-content {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 1200px;
   margin-top: 20px;
+  width: calc(265px + 57px + 945px);
+  column-gap: 57px;
 }
 
-/* Левая панель (колонка с информацией игрока и меню кнопок) */
+/* Боковая панель */
 .sidebar {
+  width: 265px;
+  flex-shrink: 0;
+}
+
+/* Центральное окно игры */
+.game-content-container {
+  width: 945px;
+  flex-shrink: 0;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-  margin-right: 30px; /* Отступ между левой панелью и основным окном */
-  width: 7.5cm; /* Устанавливаем фиксированную ширину в 7.5 см */
 }
 
 /* Стили для карточки игрока и меню кнопок */
 .player-info-container,
 .button-menu-container {
-  background-color: #ffffff; /* Белый фон */
-  padding: 15px; /* Внутренние отступы */
+  background-color: #ffffff;
+  padding: 10px;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 8px; /* Скругленные углы */
-  border: 1px solid #ddd; /* Граница как у основного окна игры */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Легкая тень для выделения */
-  overflow: hidden; /* Убираем возможные элементы, выходящие за рамки */
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
-/* Адаптируем текст внутри карточек */
+/* Адаптация текста внутри карточек */
 .player-info-container h3,
 .button-menu-container button {
-  font-size: 16px; /* Унифицированный размер текста */
-  line-height: 1.5; /* Межстрочное расстояние для читабельности */
-  white-space: nowrap; /* Запрещаем перенос строк */
-  overflow: hidden; /* Убираем текст, выходящий за пределы */
-  text-overflow: ellipsis; /* Текст будет заменен на многоточие, если не помещается */
+  font-size: 14px;
+  line-height: 1.2;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Стили для кнопок меню */
@@ -70,8 +83,8 @@
 
 .btn-primary {
   width: 100%;
-  padding: 10px;
-  font-size: 16px;
+  padding: 8px;
+  font-size: 14px;
   font-weight: bold;
   text-align: center;
   border-radius: 5px;
@@ -86,68 +99,70 @@
   background-color: #0056b3;
 }
 
-/* Центральное окно игры */
-.game-content-container {
-  flex: 1; /* Чтобы окно игры занимало оставшееся пространство */
+/* Основное окно контента игры */
+.game-content {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  flex: 1; /* Устанавливаем для адаптации содержимого */
+}
+
+/* Нижняя панель */
+.bottom-panel {
+  display: flex;
+  margin-top: 20px;
+  width: calc(265px + 57px + 945px);
+  column-gap: 57px;
+}
+
+/* Окно списка игроков */
+.player-list-container {
+  width: 265px;
+  flex-shrink: 0;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+}
+
+/* Стили для контейнера чата */
+.chat-container {
+  flex: 1;
   background-color: #fff;
   padding: 15px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень для выделения */
   box-sizing: border-box;
+  border: 1px solid #ddd;
   overflow-y: auto;
-  height: auto;
 }
 
-/* Основное окно контента игры */
-.game-content {
-  background-color: transparent; /* Убираем лишний фон */
+/* Стили для списка игроков внутри контейнера */
+.player-list-container ul {
+  list-style-type: none;
   padding: 0;
-  border-radius: 0; /* Убираем дополнительные радиусы и тени */
+  margin: 0;
 }
 
-/* Отступы для содержимого окна игры */
-.game-container {
-  margin: 10px 0;
+.player-list-container li {
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Прозрачный чёрный фон */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
+/* Адаптация при уменьшении ширины экрана */
+@media (max-width: 1200px) {
+  .main-content,
+  .bottom-panel {
+    flex-direction: column;
+    width: 100%;
+    column-gap: 0;
+  }
 
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  width: 300px;
-}
-
-.modal-content h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
-.btn-exit {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.btn-exit:hover {
-  background-color: #0056b3;
+  .sidebar,
+  .game-content-container,
+  .player-list-container,
+  .chat-container {
+    width: 100%;
+    margin-right: 0;
+  }
 }

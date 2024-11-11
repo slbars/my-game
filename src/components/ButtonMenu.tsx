@@ -7,10 +7,11 @@ import { useAppSelector } from '../store';
 
 const ButtonMenu: React.FC = () => {
     const navigate = useNavigate();
-    const isInBattle = useAppSelector(state => !!state.battle.currentBattle);
+    const battle = useAppSelector(state => state.battle.currentBattle);
+    const isInBattle = !!(battle && !battle.battleResult); // Convert to boolean with !!
 
     const handleNavigation = (path: string) => {
-        if (isInBattle && path !== '/battle') {
+        if (isInBattle && path !== 'battle') {
             alert('Вы не можете покинуть битву, пока она не завершена!');
             return;
         }
@@ -18,27 +19,24 @@ const ButtonMenu: React.FC = () => {
     };
 
     return (
-        <div id="button-menu-container" className="button-menu-container">
+        <div className="button-menu-container">
             <button
-                id="location-btn"
-                className="btn-primary btn-block mb-3"
-                onClick={() => handleNavigation('/location')}
+                className="btn-primary"
+                onClick={() => handleNavigation('location')}
                 disabled={isInBattle}
             >
                 Локация
             </button>
             <button
-                id="backpack-btn"
-                className="btn-primary btn-block mb-3"
-                onClick={() => handleNavigation('/backpack')}
+                className="btn-primary"
+                onClick={() => handleNavigation('backpack')}
                 disabled={isInBattle}
             >
                 Рюкзак
             </button>
             <button
-                id="hunt-btn"
-                className="btn-primary btn-block"
-                onClick={() => handleNavigation('/hunt')}
+                className="btn-primary"
+                onClick={() => handleNavigation('hunt')}
                 disabled={isInBattle}
             >
                 Охота

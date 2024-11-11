@@ -1,105 +1,72 @@
-// controllers/monsterController.ts
+// src/controllers/monsterController.ts
+
 import { Request, Response, NextFunction } from 'express';
-import Monster from '../models/Monster';
-import { MonsterCreationAttributes } from '../models/Monster';
+import asyncHandler from 'express-async-handler';
+import MonsterService from '../services/monsterService';
 
 // Получение всех монстров
-export const getAllMonsters = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getAllMonsters = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const monsters = await Monster.findAll();
+    const monsters = await MonsterService.getAllMonsters();
     res.json(monsters);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Неизвестная ошибка' });
-    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
-};
+});
 
 // Создание нового монстра
-export const createMonster = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createMonster = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, level, maxHealth, experience } = req.body;
-    const newMonster: MonsterCreationAttributes = {
-      name,
-      level,
-      maxHealth,
-      currentHealth: maxHealth,
-      experience,
-    };
-    const monster = await Monster.create(newMonster);
-    res.status(201).json(monster);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
+    const newMonster = await MonsterService.createMonster({ name, level, maxHealth, experience });
+    res.status(201).json(newMonster);
+  } catch (error: any) {
+    if (error.message === 'Монстр не найден') {
+      res.status(404).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Неизвестная ошибка' });
+      res.status(400).json({ message: error.message });
     }
   }
-};
+});
 
 // Получение монстра по ID
-export const getMonsterById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getMonsterById = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { monsterId } = req.params;
-    const monster = await Monster.findByPk(monsterId);
-    if (!monster) {
-      res.status(404).json({ message: 'Монстр не найден' });
-      return;
-    }
+    const monster = await MonsterService.getMonsterById(Number(monsterId));
     res.json(monster);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Неизвестная ошибка' });
-    }
+  } catch (error: any) {
+    res.status(404).json({ message: error.message });
   }
-};
+});
 
 // Обновление монстра
-export const updateMonster = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateMonster = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { monsterId } = req.params;
-    const { name, level, maxHealth, currentHealth, experience } = req.body;
-    const monster = await Monster.findByPk(monsterId);
-    if (!monster) {
-      res.status(404).json({ message: 'Монстр не найден' });
-      return;
-    }
-    if (name !== undefined) monster.name = name;
-    if (level !== undefined) monster.level = level;
-    if (maxHealth !== undefined) monster.maxHealth = maxHealth;
-    if (currentHealth !== undefined) monster.currentHealth = currentHealth;
-    if (experience !== undefined) monster.experience = experience;
-    await monster.save();
-    res.json(monster);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
+    const updateData = req.body;
+    const updatedMonster = await MonsterService.updateMonster(Number(monsterId), updateData);
+    res.json(updatedMonster);
+  } catch (error: any) {
+    if (error.message === 'Монстр не найден') {
+      res.status(404).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Неизвестная ошибка' });
+      res.status(400).json({ message: error.message });
     }
   }
-};
+});
 
 // Удаление монстра
-export const deleteMonster = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteMonster = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { monsterId } = req.params;
-    const monster = await Monster.findByPk(monsterId);
-    if (!monster) {
-      res.status(404).json({ message: 'Монстр не найден' });
-      return;
-    }
-    await monster.destroy();
-    res.json({ message: 'Монстр удалён' });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+    const result = await MonsterService.deleteMonster(Number(monsterId));
+    res.json(result);
+  } catch (error: any) {
+    if (error.message === 'Монстр не найден') {
+      res.status(404).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Неизвестная ошибка' });
+      res.status(500).json({ message: error.message });
     }
   }
-};
+});

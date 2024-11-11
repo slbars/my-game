@@ -1,32 +1,33 @@
+// src/components/ProtectedRoute.tsx
+
 import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../store';
-import { fetchCurrentPlayer } from '../store/playerSlice';
+import { clearPlayer, fetchCurrentPlayer } from '../store/playerSlice';
+import { clearBattle } from '../store/battleSlice';
 
 interface ProtectedRouteProps {
   children: JSX.Element;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { player, loading } = useAppSelector((state) => state.player);
   const dispatch = useAppDispatch();
-
-  // Проверка на наличие токена в localStorage
-  const token = localStorage.getItem('token');
+  const location = useLocation();
+  const { player, token } = useAppSelector((state) => state.player);
 
   useEffect(() => {
-    // Если токен есть, но игрок не загружен, пытаемся загрузить его
-    if (token && !player) {
+    if (!token) {
+      dispatch(clearPlayer());
+      dispatch(clearBattle());
+    } else if (!player) {
       dispatch(fetchCurrentPlayer());
     }
   }, [token, player, dispatch]);
 
-  if (loading) {
-    return <div>Загрузка...</div>;
-  }
+  // Проверяем, если путь - это "login" или "register", не перенаправляем
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
 
-  // Если игрока нет и токен не найден, перенаправляем на страницу логина
-  if (!player && !token) {
+  if (!token && !isAuthRoute) {
     return <Navigate to="/login" replace />;
   }
 

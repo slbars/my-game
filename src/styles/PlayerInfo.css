@@ -1,51 +1,36 @@
 /* src/styles/PlayerInfo.css */
 
-.player-info-container {
+.player-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
-
-.player-info-header {
-  display: flex;
-  justify-content: space-between;
   width: 100%;
-  margin-bottom: 10px;
 }
+  .player-info-header {
+    display: flex;
+    align-items: center;
+  }
 
-.logout-button {
-  background: none;
-  border: none;
-  color: #dc3545;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
+  .player-info-header h3 {
+    margin: 0;
+    font-size: 1.2rem; /* Одинаковый размер шрифта */
+  }
 
-.logout-button:hover {
-  color: #c82333;
-}
+  .info-button, .logout-button {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
 
-.health-bar {
-  width: 100%;
-  height: 20px;
-  background-color: #ddd;
-  border-radius: 10px;
-  margin: 10px 0;
-  overflow: hidden;
-}
+  .info-button:hover {
+    color: #007bff;
+  }
 
-.health-bar-fill {
-  height: 100%;
-  background-color: #28a745;
-  transition: width 0.3s ease;
-}
+  .logout-button {
+    color: #dc3545;
+  }
 
-.player-info-container p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.small-logout-button {
-  font-size: 1rem; /* Уменьшаем размер шрифта для кнопки выхода */
-}
+  .logout-button:hover {
+    color: #c82333;
+  }

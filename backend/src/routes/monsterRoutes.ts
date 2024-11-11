@@ -1,4 +1,5 @@
-// routes/monsterRoutes.ts
+// backend/src/routes/monsterRoutes.ts
+
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 import {

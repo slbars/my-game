@@ -1,23 +1,30 @@
+// backend/src/routes/playerRoutes.ts
+
 import express from 'express';
-import { loginPlayer, createPlayer, getCurrentPlayer, updatePlayer, deletePlayer } from '../controllers/playerController'; // Добавлен import getCurrentPlayer
+import { 
+  loginPlayer, 
+  createPlayer, 
+  getCurrentPlayer, 
+  updatePlayer, 
+  deletePlayer, 
+  getPlayerInfoById,
+  getPlayerList // Импортируем новый контроллер
+} from '../controllers/playerController';
 import auth from '../middleware/auth';
 import { asyncHandler } from '../utils/asyncHandler';
 
 const router = express.Router();
 
-// Маршрут для входа игрока
+// Публичные маршруты
 router.post('/login', asyncHandler(loginPlayer));
-
-// Маршрут для создания нового игрока (регистрация)
 router.post('/', asyncHandler(createPlayer));
 
-// Маршрут для получения текущего игрока
+// Защищённые маршруты
 router.get('/me', auth, asyncHandler(getCurrentPlayer));
-
-// Маршрут для обновления данных игрока по ID
+router.get('/info/:id', auth, asyncHandler(getPlayerInfoById)); // Объявлен до '/:id'
+router.get('/list', auth, asyncHandler(getPlayerList)); // Новый маршрут для списка игроков
 router.put('/:id', auth, asyncHandler(updatePlayer));
-
-// Маршрут для удаления игрока по ID
 router.delete('/:id', auth, asyncHandler(deletePlayer));
 
+// Экспорт маршрутов
 export default router;

@@ -17,7 +17,7 @@ const MonsterInfo: React.FC<MonsterInfoProps> = ({ name, level, currentHealth, m
 
     return (
         <div className="monster-info-container">
-            <h3>{name} [Уровень {level}]</h3>
+            <h3>{name} [{level}]</h3>
             <HealthBar currentHealth={displayedHealth} maxHealth={displayedMaxHealth} />
         </div>
     );

@@ -1,27 +1,38 @@
 /* src/styles/ExperienceBar.css */
-
-.experience-bar-container {
-  position: relative;
-  width: 6cm;
-  height: 25px; /* Убедитесь, что высота соответствует компоненту */
-  background-color: #ddd;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-.experience-bar {
+  .experience-bar-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px; /* Same as health bar */
+    height: 25px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+.experience-bar-container:hover::after {
+  content: "Опыт";
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}.experience-bar {
   height: 100%;
   background-color: #e58e0a; /* Жёлтый цвет для опыта */
   transition: width 0.5s ease;
 }
-
-.experience-bar-text {
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  font-weight: bold;
-  color: #000;
-  top: 0;
-  left: 0;
-  line-height: 25px; /* Центрирование текста */
-}
+  .experience-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    top: 0;
+    left: 0;
+    line-height: 25px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  }

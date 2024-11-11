@@ -1,14 +1,27 @@
-// backend/models/index.ts
+// backend/src/models/index.ts
 
-import Player from './Player';
-import Monster from './Monster';
-import Battle from './Battle';
+import { Sequelize } from 'sequelize-typescript';
+import dotenv from 'dotenv';
 
-// Ассоциации
-Player.hasMany(Battle, { foreignKey: 'playerId', as: 'battles' });
-Battle.belongsTo(Player, { foreignKey: 'playerId', as: 'player' });
+dotenv.config();
 
-Monster.hasMany(Battle, { foreignKey: 'monsterId', as: 'battles' });
-Battle.belongsTo(Monster, { foreignKey: 'monsterId', as: 'monster' });
+const sequelize = new Sequelize({
+  database: process.env.DB_NAME || '',
+  dialect: 'postgres',
+  username: process.env.DB_USER || '',
+  password: process.env.DB_PASSWORD || '',
+  host: process.env.DB_HOST || '',
+  port: Number(process.env.DB_PORT) || 5432,
+  logging: false,
+});
 
-export { Player, Monster, Battle };
+import { Player } from './Player';
+import { Monster } from './Monster';
+import { Battle } from './Battle';
+import { BattleLog } from './BattleLog';
+import { ChatMessage } from './ChatMessage';
+
+sequelize.addModels([Player, Monster, Battle, BattleLog, ChatMessage]);
+
+export { sequelize, Player, Monster, Battle, BattleLog, ChatMessage };
+export default sequelize;
