@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "slbars",
+    "password": "Vjcrdf041994$",
+    "database": "my_game_db",
+    "host": "localhost",
+    "dialect": "postgres",
+    "logging": false
+  }
+}

@@ -1,0 +1,26 @@
+/* src/styles/ContextMenu.css */
+
+.context-menu {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    z-index: 1000;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100px;
+  }
+  
+  .context-menu-item {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .context-menu-item:hover {
+    background-color: #f1f1f1;
+  }
+  
